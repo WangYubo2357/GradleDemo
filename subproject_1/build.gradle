@@ -1,0 +1,67 @@
+/*
+ * 子项目 subproject_1 的构建脚本
+ */
+
+plugins {
+    id 'java'  // 添加 Java 插件来演示 build 任务
+}
+
+// 子项目的基本配置
+group = 'com.example'
+version = '1.0.0'
+
+// 子项目的依赖配置
+dependencies {
+    // 可以在这里添加依赖
+}
+
+// 配置阶段演示
+println "=== 配置阶段：正在配置任务 ==="
+
+// 子项目的任务配置
+tasks.register('helloSubProject') {
+    // 在配置阶段捕获项目属性
+    def projectGroup = project.group
+    def projectVersion = project.version
+    def projectName = project.name
+    
+    println "配置阶段：正在配置任务 helloSubProject"
+    
+    doFirst {
+        println "=== 执行阶段：任务开始执行 ==="
+    }
+    
+    doLast {
+        println "执行阶段：Hello from subproject_1!"
+        println "执行阶段：项目组: ${projectGroup}"
+        println "执行阶段：项目版本: ${projectVersion}"
+        println "执行阶段：项目名称: ${projectName}"
+    }
+}
+
+println "=== 配置阶段：任务配置完成 ==="
+
+// 导入必要的注解
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.Internal
+
+class MyTask extends DefaultTask {
+    // 在配置阶段捕获项目名称
+    @Internal
+    String projectName
+    
+    @TaskAction
+    void doSomething() {
+        println "MyTask: 执行自定义任务逻辑..."
+        println "MyTask: 项目名称 = ${projectName}"
+        println "MyTask: 任务完成！"
+    }
+}
+
+// 注册自定义任务（不需要 doLast，因为 @TaskAction 已经处理了执行逻辑）
+tasks.register('myTask', MyTask) {
+    description = '这是一个自定义任务示例'
+    group = 'custom'
+    // 在配置阶段设置项目名称
+    projectName = project.name
+}
