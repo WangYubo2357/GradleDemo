@@ -41,27 +41,30 @@ tasks.register('helloSubProject') {
 
 println "=== 配置阶段：任务配置完成 ==="
 
-// 导入必要的注解
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.Internal
-
-class MyTask extends DefaultTask {
-    // 在配置阶段捕获项目名称
-    @Internal
-    String projectName
-    
-    @TaskAction
-    void doSomething() {
-        println "MyTask: 执行自定义任务逻辑..."
-        println "MyTask: 项目名称 = ${projectName}"
-        println "MyTask: 任务完成！"
-    }
-}
+// 导入自定义任务类
+// 注意: 不需要显式导入 MyTask 类
+// 因为 buildSrc 目录下的类会自动添加到构建脚本的 classpath 中
+// 所以可以直接使用完整的类名
 
 // 注册自定义任务（不需要 doLast，因为 @TaskAction 已经处理了执行逻辑）
-tasks.register('myTask', MyTask) {
+tasks.register('myTask', com.example.tasks.MyTask) {
     description = '这是一个自定义任务示例'
     group = 'custom'
     // 在配置阶段设置项目名称
     projectName = project.name
 }
+
+task Task1 {
+    description = '这是一个自定义任务示例'
+    group = 'custom'
+    
+    // 在配置阶段捕获项目名称
+    def projectName = project.name
+    
+    doLast {
+        println "Task1: 执行自定义任务逻辑..."
+        println "Task1: 项目名称 = ${projectName}"
+        println "Task1: 任务完成！"
+    }
+}
+
